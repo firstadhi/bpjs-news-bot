@@ -1,17 +1,8 @@
-import requests
-import config
 import datetime
+import config
 from database import get_news_by_date, get_news_last_week, get_news_by_month
-from scraper import scrape_news  # untuk perintah /refresh
-
-def send_message(text):
-    url = f"https://api.telegram.org/bot{config.TELEGRAM_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": config.CHAT_ID,
-        "text": text,
-        "parse_mode": "HTML"
-    }
-    requests.post(url, json=payload)
+from scraper import scrape_news
+from notifier import send_message  # <- perubahan penting
 
 def handle_update(update):
     message = update.get("message", {})
