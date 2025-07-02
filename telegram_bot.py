@@ -27,7 +27,7 @@ def handle_update(update, context):
         except:
             reply = "Format salah. Gunakan: /bulan Juli 2025"
     elif text == "/refresh":
-        send_message("🔄 Sedang memproses update berita terbaru...")
+        send_message(chat_id=update.effective_chat.id, text="🔄 Memproses update berita terbaru...")
         scrape_news()
         return
     else:
