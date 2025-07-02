@@ -1,6 +1,7 @@
 import os
 import json
-db_file = "news_db.json"
+from config import DATABASE
+db_file = DATABASE
 
 def save_news(title, link, published):
     data = load_news()
