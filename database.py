@@ -4,14 +4,15 @@ from config import DATABASE
 db_file = DATABASE
 
 def save_news(title, link, published):
+    print(f"[DB] Menyimpan: {title} - {url}")
     data = load_news()
     data[title] = {"link": link, "published": published}
     with open(db_file, "w") as f:
         json.dump(data, f)
 
-def is_news_sent(title):
-    data = load_news()
-    return title in data
+def is_news_sent(title, url):
+    cursor.execute("SELECT 1 FROM news WHERE title = ? AND url = ?", (title, url))
+    return cursor.fetchone() is not None
 
 def load_news():
     if not os.path.exists(db_file):
