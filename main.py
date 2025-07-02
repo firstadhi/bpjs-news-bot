@@ -1,6 +1,6 @@
 from flask import Flask, request
 from telegram import Update
-from telegram.ext import Application, Dispatcher, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes
 from telegram_bot import handle_update  # Fungsi handler Anda
 
 import os
