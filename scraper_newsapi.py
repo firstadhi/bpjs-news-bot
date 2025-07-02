@@ -1,3 +1,7 @@
+import requests
+import config
+from database import save_news, is_news_sent
+from notifier import send_message
 from datetime import datetime, timedelta
 
 def scrape_newsapi():
