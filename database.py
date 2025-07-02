@@ -25,8 +25,8 @@ def get_news_by_date(date):
     data = load_news()
     result = []
     for title, val in data.items():
-        pub_date = datetime.fromisoformat(val["published"])
-        if pub_date.date() == date:
+        pub_date = datetime.fromisoformat(val["published"]).date()
+        if pub_date == date:
             result.append((pub_date, title, val["link"]))
     return sorted(result)
 
