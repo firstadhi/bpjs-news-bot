@@ -1,4 +1,3 @@
-# telegram_bot.py
 import datetime
 from database import get_news_by_date, get_news_last_week, get_news_by_month
 from scraper import scrape_news
@@ -33,9 +32,10 @@ def handle_update(update, context):
     else:
         reply = "Perintah tidak dikenal. Gunakan: /today, /week, /bulan <bulan tahun>, /refresh"
 
-    send_message(reply)
+    # 🛠️ Perbaikan disini:
+    send_message(chat_id=update.effective_chat.id, text=reply)
 
 def format_news_list(news, title):
     if not news:
         return f"Tidak ada berita untuk {title}"
-    return f"<b>Berita {title}:</b>\n\n" + "\n\n".join([f"📰 {n[1]}\n{n[2]}" for n in news])
+    return f"<b>Berita {title}:</b>\n
