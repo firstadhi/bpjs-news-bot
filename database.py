@@ -17,3 +17,39 @@ def load_news():
         return {}
     with open(db_file, "r") as f:
         return json.load(f)
+
+from datetime import datetime, timedelta
+
+def get_news_by_date(date):
+    data = load_news()
+    result = []
+    for title, val in data.items():
+        pub_date = datetime.fromisoformat(val["published"])
+        if pub_date.date() == date:
+            result.append((pub_date, title, val["link"]))
+    return sorted(result)
+
+def get_news_last_week():
+    today = datetime.today().date()
+    last_week = today - timedelta(days=7)
+    data = load_news()
+    result = []
+    for title, val in data.items():
+        pub_date = datetime.fromisoformat(val["published"]).date()
+        if last_week <= pub_date <= today:
+            result.append((pub_date, title, val["link"]))
+    return sorted(result)
+
+def get_news_by_month(month_str, year):
+    from calendar import month_name
+    month_lookup = {m.lower(): i for i, m in enumerate(month_name) if m}
+    month = month_lookup.get(month_str.lower())
+    if not month:
+        return []
+    data = load_news()
+    result = []
+    for title, val in data.items():
+        pub_date = datetime.fromisoformat(val["published"])
+        if pub_date.month == month and pub_date.year == year:
+            result.append((pub_date, title, val["link"]))
+    return sorted(result)
