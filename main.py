@@ -4,7 +4,6 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 import config
-from telegram_bot import handle_update  # Fungsi handler dari telegram_bot.py
 
 # Inisialisasi Flask dan Application
 app = Flask(__name__)
