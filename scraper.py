@@ -18,6 +18,6 @@ def scrape_news():
 
             if not is_news_sent(title):
                 save_news(title, url, published)
-                send_message(f"📰 {title}\n{url}")
+                send_message(f"📰 {title}\n{url}", chat_id=config.CHAT_ID)
     except Exception as e:
         print(f"[ERROR] Google CSE failed: {e}")
