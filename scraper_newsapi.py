@@ -28,4 +28,5 @@ def scrape_newsapi():
         link = article["url"]
         published = article["publishedAt"]
         if not is_news_sent(title):
-            save_news(title, link, p_
+            save_news(title, link, published)
+            send_message(f"📰 {title}\n{link}")
