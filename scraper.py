@@ -14,7 +14,7 @@ def scrape_news():
             title = r["title"]
             url = r["url"]
             content = r["content"]
-            published = datetime.utcnow().isoformat()  # pakai waktu saat ini
+            published = datetime.utcnow().date().isoformat()
 
             if not is_news_sent(title):
                 print(f"[NEW] Google CSE: {title}")  # log berita baru
