@@ -1,20 +1,23 @@
 from flask import Flask, request
-from telegram_bot import handle_update
-from scraper import schedule_scraping
-import config
+from scraper import scrape_news
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 
 @app.route('/')
-def index():
-    return 'BPJS Ketenagakerjaan News Bot is running.'
+def home():
+    return "BPJS News Bot Active!"
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    update = request.get_json()
-    handle_update(update)
-    return 'OK', 200
+    data = request.get_json()
+    message = data.get('message', {}).get('text', '')
+    if message == "/refresh":
+        scrape_news()
+    return "", 200
 
 if __name__ == '__main__':
-    schedule_scraping()
-    app.run(host='0.0.0.0', port=5000)
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(scrape_news, 'interval', hours=1)
+    scheduler.start()
+    app.run(host="0.0.0.0", port=5000)
