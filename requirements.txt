@@ -2,5 +2,4 @@ Flask
 requests
 APScheduler
 beautifulsoup4
-pytelegrambotapi
 python-telegram-bot==20.6
