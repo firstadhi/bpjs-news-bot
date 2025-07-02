@@ -40,8 +40,10 @@ def webhook():
         except:
             reply = "Format salah. Gunakan: /bulan Juli 2025"
     elif text == "/refresh":
+        print("📥 Bot menerima perintah /refresh")
         send_message("🔄 Memproses update berita terbaru...")
         scrape_news()
+        print("✅ Selesai scraping semua sumber")
         return "ok"
     else:
         reply = (
