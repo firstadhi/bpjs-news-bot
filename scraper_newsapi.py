@@ -1,35 +1,34 @@
 import requests
-import config
+from datetime import datetime, timedelta
+from config import NEWSAPI_KEY, NEWS_KEYWORD
 from database import save_news, is_news_sent
 from notifier import send_message
-from datetime import datetime, timedelta
 
 def scrape_newsapi():
-    api_key = config.NEWSAPI_KEY
-    query = config.NEWS_KEYWORD
-
-    # Hitung waktu 24 jam ke belakang
     today = datetime.utcnow()
     yesterday = today - timedelta(days=1)
 
     url = (
-        f"https://newsapi.org/v2/everything?q={query}&language=id"
+        f"https://newsapi.org/v2/everything?q={NEWS_KEYWORD}&language=id"
         f"&from={yesterday.isoformat()}&to={today.isoformat()}"
-        f"&sortBy=publishedAt&pageSize=10&apiKey={api_key}"
+        f"&sortBy=publishedAt&pageSize=10&apiKey={NEWSAPI_KEY}"
     )
 
-    response = requests.get(url)
-    if response.status_code != 200:
-        print(f"[ERROR] NewsAPI failed: {response.status_code} {response.text}")
+    try:
+        response = requests.get(url)
+        data = response.json()
+    except Exception as e:
+        print(f"[ERROR] NewsAPI failed: {e}")
         return
-
-    data = response.json()
 
     for article in data.get("articles", []):
         title = article["title"]
-        link = article["url"]
+        url = article["url"]
         published = article["publishedAt"]
 
-        if not is_news_sent(title, url):
-            save_news(title, link, published)
-            send_message(f"📰 {title}\n{link}")
+        if not is_news_sent(title):
+            print(f"[NEW] NewsAPI: {title}")
+            save_news(title, url, published)
+            send_message(f"📰 <b>{title}</b>\n{url}")
+        else:
+            print(f"[SKIP] {title}")
