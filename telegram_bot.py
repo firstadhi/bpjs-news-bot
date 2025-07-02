@@ -36,3 +36,6 @@ def format_news_list(news, title):
     if not news:
         return f"Tidak ada berita untuk {title}"
     return f"<b>Berita {title}:</b>\n\n" + "\n\n".join([f"📰 {n[1]}\n{n[2]}" for n in news])
+
+dispatcher.add_handler(CommandHandler("google", handle_google_search))
+
