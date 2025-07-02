@@ -18,8 +18,12 @@ def scrape_newsapi():
         f"&sortBy=publishedAt&pageSize=10&apiKey={api_key}"
     )
 
-    response = requests.get(url)
-    data = response.json()
+response = requests.get(url)
+if response.status_code != 200:
+    print(f"[ERROR] NewsAPI failed: {response.status_code} {response.text}")
+    return
+
+data = response.json()
 
     for article in data.get("articles", []):
         title = article["title"]
