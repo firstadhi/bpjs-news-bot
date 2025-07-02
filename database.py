@@ -11,14 +11,12 @@ def load_news():
     with open(db_file, "r") as f:
         return json.load(f)
 
-def save_news(title, link, published=None):
-    if not published:
-        published = datetime.utcnow().isoformat()
-    print(f"[DB] Menyimpan: {title} - {link}")
+def save_news(title, url, published):
     data = load_news()
-    data[title] = {"link": link, "published": published}
+    data[title] = {"url": url, "published": published}
     with open(db_file, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=2)
+    print(f"[DB] Saved: {title}")
 
 def is_news_sent(title):
     data = load_news()
@@ -26,23 +24,17 @@ def is_news_sent(title):
 
 def get_news_by_date(date):
     data = load_news()
-    result = []
-    for title, val in data.items():
-        pub_date = datetime.fromisoformat(val["published"]).date()
-        if pub_date == date:
-            result.append((pub_date, title, val["link"]))
-    return sorted(result)
+    return [(datetime.fromisoformat(v["published"]), t, v["url"])
+            for t, v in data.items()
+            if datetime.fromisoformat(v["published"]).date() == date]
 
 def get_news_last_week():
-    today = datetime.today().date()
-    last_week = today - timedelta(days=7)
+    today = datetime.utcnow().date()
+    one_week_ago = today - timedelta(days=7)
     data = load_news()
-    result = []
-    for title, val in data.items():
-        pub_date = datetime.fromisoformat(val["published"]).date()
-        if last_week <= pub_date <= today:
-            result.append((pub_date, title, val["link"]))
-    return sorted(result)
+    return [(datetime.fromisoformat(v["published"]), t, v["url"])
+            for t, v in data.items()
+            if one_week_ago <= datetime.fromisoformat(v["published"]).date() <= today]
 
 def get_news_by_month(month_str, year):
     from calendar import month_name
@@ -51,9 +43,6 @@ def get_news_by_month(month_str, year):
     if not month:
         return []
     data = load_news()
-    result = []
-    for title, val in data.items():
-        pub_date = datetime.fromisoformat(val["published"])
-        if pub_date.month == month and pub_date.year == year:
-            result.append((pub_date, title, val["link"]))
-    return sorted(result)
+    return [(datetime.fromisoformat(v["published"]), t, v["url"])
+            for t, v in data.items()
+            if datetime.fromisoformat(v["published"]).month == month and datetime.fromisoformat(v["published"]).year == year]
