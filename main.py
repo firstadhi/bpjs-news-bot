@@ -60,6 +60,14 @@ def webhook():
 def index():
     return "✅ Bot aktif dan berjalan dengan webhook."
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from scraper import scrape_news
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(scrape_news, 'interval', minutes=10)  # tiap 10 menit
+scheduler.start()
+
+
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))
