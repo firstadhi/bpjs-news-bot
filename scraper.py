@@ -3,13 +3,17 @@ from scraper_google import search_bpjs_news
 from database import save_news, is_news_sent
 from notifier import send_message
 from datetime import datetime
+import config
 
 def scrape_news():
+    print("⏳ Mulai scrape dari NewsAPI...")
     scrape_newsapi()
+    print("✅ Selesai NewsAPI, lanjut ke Google CSE...")
 
-    # 🔁 Ambil dari Google CSE juga
     try:
-        results = google_search("BPJS Ketenagakerjaan site:.go.id OR site:.com OR site:.id OR site:.co.id")
+        results = search_bpjs_news()
+        print(f"📄 Google CSE menemukan {len(results)} hasil.")
+
         for r in results:
             title = r["title"]
             url = r["url"]
@@ -17,8 +21,10 @@ def scrape_news():
             published = datetime.utcnow().date().isoformat()
 
             if not is_news_sent(title):
-                print(f"[NEW] Google CSE: {title}")  # log berita baru
+                print(f"[NEW] Google CSE: {title}")
                 save_news(title, url, published)
                 send_message(f"📰 {title}\n{url}", chat_id=config.CHAT_ID)
+            else:
+                print(f"[SKIP] Sudah ada: {title}")
     except Exception as e:
         print(f"[ERROR] Google CSE failed: {e}")
