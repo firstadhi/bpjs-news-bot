@@ -12,15 +12,13 @@ def scrape_news():
 
     try:
         results = search_bpjs_news()
-        print(f"📄 Google CSE menemukan {len(results)} hasil.")
+        print(f"[INFO] Jumlah hasil dari Google CSE: {len(results)}")
 
         for r in results:
             title = r["title"]
             url = r["url"]
-            content = r["content"]
+            content = r.get("content", "")
             published = r.get("published", datetime.utcnow().isoformat())
-            save_news(title, url, published)
-
 
             if not is_news_sent(title):
                 print(f"[NEW] Google CSE: {title}")
