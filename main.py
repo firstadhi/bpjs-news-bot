@@ -42,9 +42,13 @@ def webhook():
     elif text == "/refresh":
         print("📥 Bot menerima perintah /refresh")
         send_message("🔄 Memproses update berita terbaru...")
-        scrape_news()
-        print("✅ Selesai scraping semua sumber")
+        try:
+            scrape_news()
+            print("✅ Selesai scraping semua sumber")
+        except Exception as e:
+            print(f"[ERROR] Saat scrape_news(): {e}")
         return "ok"
+
     else:
         reply = (
             "Perintah tidak dikenali.\n"
