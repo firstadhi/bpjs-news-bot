@@ -8,22 +8,21 @@ import config
 def scrape_news():
     print("⏳ Mulai scrape dari NewsAPI...")
     scrape_newsapi()
-    print("✅ Selesai NewsAPI, lanjut ke Google CSE...")
 
+    print("✅ Selesai NewsAPI, lanjut ke Google CSE...")
     try:
         results = search_bpjs_news()
-        print(f"📄 Google CSE menemukan {len(results)} hasil.")
+        print(f"[INFO] Google CSE menemukan {len(results)} hasil.")
         for r in results:
             title = r["title"]
             url = r["url"]
-            content = r["content"]
-            published = r.get("published", datetime.utcnow().isoformat())
+            published = r["published"]
 
             if not is_news_sent(title):
-                print(f"[NEW] Google CSE: {title}")
+                print(f"[NEW] {title}")
                 save_news(title, url, published)
-                send_message(f"📰 {title}\n{url}")
+                send_message(f"📰 <b>{title}</b>\n{url}")
             else:
-                print(f"[SKIP] Sudah pernah dikirim: {title}")
+                print(f"[SKIP] {title}")
     except Exception as e:
-        print(f"[ERROR] Google CSE failed: {e}")
+        print(f"[ERROR] Gagal Google CSE: {e}")
