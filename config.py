@@ -1,10 +1,8 @@
-import os
+TELEGRAM_TOKEN = "7595723761:AAE51oW9XFrvCpqcq83yx-q9XkCNKUKvKJA"  # Ganti dengan token kamu
+CHAT_ID = "846561600"  # Ganti dengan chat_id bot kamu
 
-TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-CHAT_ID = os.getenv('CHAT_ID')
-DATABASE = os.getenv('DATABASE', 'news.db')
-NEWS_KEYWORD = os.getenv('NEWS_KEYWORD', 'BPJS Ketenagakerjaan')
-NEWS_SITE = f"https://news.google.com/search?q={NEWS_KEYWORD.replace(' ', '%20')}"
-NEWSAPI_KEY = os.getenv('NEWSAPI_KEY')
-GOOGLE_CSE_API_KEY = os.getenv('GOOGLE_CSE_API_KEY')
-GOOGLE_CSE_CX = os.getenv('GOOGLE_CSE_CX')
+DATABASE = "news_db.json"
+NEWS_KEYWORD = "BPJS Ketenagakerjaan"
+NEWSAPI_KEY = "your-newsapi-key"
+GOOGLE_API_KEY = "your-google-api-key"
+GOOGLE_CSE_ID = "your-custom-search-id"
