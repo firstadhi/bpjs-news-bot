@@ -1,15 +1,11 @@
-import requests
-import config
+from scraper_google import search_bpjs_news
 
-def send_message(message):
-    url = f"https://api.telegram.org/bot{config.BOT_TOKEN}/sendMessage"
-    payload = {
-    "chat_id": config.CHAT_ID,
-    "text": message,
-    "parse_mode": "HTML"
-}
+def handle_google_search(update, context):
+    articles = search_bpjs_news()
+    if not articles:
+        update.message.reply_text("Tidak ditemukan berita terbaru.")
+        return
 
-    try:
-        requests.post(url, json=payload)
-    except Exception as e:
-        print("Failed to send message:", e)
+    for article in articles:
+        text = f"📰 {article['title']}\n{article['url']}\n\n{article['content'][:300]}..."
+        update.message.reply_text(text)
