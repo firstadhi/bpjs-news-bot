@@ -1,5 +1,4 @@
 # telegram_bot.py
-
 import datetime
 from database import get_news_by_date, get_news_last_week, get_news_by_month
 from scraper import scrape_news
