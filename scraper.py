@@ -9,7 +9,7 @@ def scrape_news():
 
     # 🔁 Ambil dari Google CSE juga
     try:
-        results = search_bpjs_news()
+        results = google_search("BPJS Ketenagakerjaan site:.go.id OR site:.com OR site:.id OR site:.co.id")
         for r in results:
             title = r["title"]
             url = r["url"]
