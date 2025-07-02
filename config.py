@@ -1,8 +1,13 @@
-TELEGRAM_TOKEN = "7595723761:AAE51oW9XFrvCpqcq83yx-q9XkCNKUKvKJA"  # Ganti dengan token kamu
-CHAT_ID = "846561600"  # Ganti dengan chat_id bot kamu
+import os
+from dotenv import load_dotenv
 
-DATABASE = "news_db.json"
-NEWS_KEYWORD = "BPJS Ketenagakerjaan"
-NEWSAPI_KEY = "your-newsapi-key"
-GOOGLE_API_KEY = "your-google-api-key"
-GOOGLE_CSE_ID = "your-custom-search-id"
+# Muat .env jika dijalankan secara lokal
+load_dotenv()
+
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+DATABASE = os.getenv("DATABASE", "news.json")
+NEWS_KEYWORD = os.getenv("NEWS_KEYWORD", "BPJS Ketenagakerjaan")
+NEWSAPI_KEY = os.getenv("NEWSAPI_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID")
