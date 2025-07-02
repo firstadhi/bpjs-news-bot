@@ -1,0 +1,4 @@
+__pycache__/
+.env
+*.pyc
+news_db.json
