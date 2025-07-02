@@ -11,6 +11,7 @@ def send_message(chat_id, text: str):
     try:
         response = requests.post(url, json=payload)
         response.raise_for_status()
+        return response
     except requests.exceptions.RequestException as e:
         print(f"Failed to send message: {e}")
-    return response
+        return None  # tambah ini untuk aman
