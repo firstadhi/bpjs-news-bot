@@ -17,6 +17,7 @@ def scrape_news():
             published = datetime.utcnow().isoformat()  # pakai waktu saat ini
 
             if not is_news_sent(title):
+                print(f"[NEW] Google CSE: {title}")  # log berita baru
                 save_news(title, url, published)
                 send_message(f"📰 {title}\n{url}", chat_id=config.CHAT_ID)
     except Exception as e:
