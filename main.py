@@ -1,23 +1,11 @@
-from flask import Flask, request
-from scraper import scrape_news
-from apscheduler.schedulers.background import BackgroundScheduler
+import requests
+import config
 
-app = Flask(__name__)
+def set_webhook():
+    url = f"https://api.telegram.org/bot{config.TELEGRAM_TOKEN}/setWebhook"
+    webhook_url = f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME')}/{config.TELEGRAM_TOKEN}"
+    response = requests.post(url, json={"url": webhook_url})
+    print("Webhook response:", response.text)
 
-@app.route('/')
-def home():
-    return "BPJS News Bot Active!"
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    data = request.get_json()
-    message = data.get('message', {}).get('text', '')
-    if message == "/refresh":
-        scrape_news()
-    return "", 200
-
-if __name__ == '__main__':
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(scrape_news, 'interval', hours=1)
-    scheduler.start()
-    app.run(host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    set_webhook()
