@@ -1,41 +1,34 @@
+import telebot
 import datetime
-import config
 from database import get_news_by_date, get_news_last_week, get_news_by_month
 from scraper import scrape_news
-from notifier import send_message  # <- perubahan penting
+import config
 
-def handle_update(update):
-    message = update.get("message", {})
-    text = message.get("text", "").lower()
+bot = telebot.TeleBot(config.TELEGRAM_TOKEN)
 
-    if text == "/today":
-        today = datetime.date.today()
-        news = get_news_by_date(today)
-        reply = format_news_list(news, "Hari Ini")
-    elif text == "/week":
-        news = get_news_last_week()
-        reply = format_news_list(news, "1 Minggu Terakhir")
-    elif text.startswith("/bulan "):
-        try:
-            month_year = text.replace("/bulan ", "")
-            month, year = month_year.split()
-            news = get_news_by_month(month, int(year))
-            reply = format_news_list(news, f"Bulan {month} {year}")
-        except:
-            reply = "Format salah. Gunakan: /bulan Juli 2025"
-    elif text == "/refresh":
-        send_message("🔄 Sedang memproses update berita terbaru...")
-        scrape_news()
-        return
-    else:
-        reply = "Perintah tidak dikenal. Gunakan: /today, /week, /bulan <bulan tahun>, /refresh"
+@bot.message_handler(commands=['today'])
+def handle_today(message):
+    today = datetime.date.today()
+    news = get_news_by_date(today)
+    reply = format_news_list(news, "Hari Ini")
+    bot.send_message(config.CHAT_ID, reply, parse_mode="HTML")
 
-    send_message(reply)
+@bot.message_handler(commands=['week'])
+def handle_week(message):
+    news = get_news_last_week()
+    reply = format_news_list(news, "1 Minggu Terakhir")
+    bot.send_message(config.CHAT_ID, reply, parse_mode="HTML")
+
+@bot.message_handler(commands=['refresh'])
+def handle_refresh(message):
+    bot.send_message(config.CHAT_ID, "🔄 Sedang memproses update berita terbaru...")
+    scrape_news()
 
 def format_news_list(news, title):
     if not news:
         return f"Tidak ada berita untuk {title}"
     return f"<b>Berita {title}:</b>\n\n" + "\n\n".join([f"📰 {n[1]}\n{n[2]}" for n in news])
 
-dispatcher.add_handler(CommandHandler("google", handle_google_search))
-
+if __name__ == "__main__":
+    print("Bot Telegram aktif...")
+    bot.infinity_polling()
