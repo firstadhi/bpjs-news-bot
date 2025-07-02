@@ -1,18 +1,9 @@
 import os
 import json
 from config import DATABASE
+from datetime import datetime, timedelta
+
 db_file = DATABASE
-
-def save_news(title, link, published):
-    print(f"[DB] Menyimpan: {title} - {url}")
-    data = load_news()
-    data[title] = {"link": link, "published": published}
-    with open(db_file, "w") as f:
-        json.dump(data, f)
-
-def is_news_sent(title, url):
-    cursor.execute("SELECT 1 FROM news WHERE title = ? AND url = ?", (title, url))
-    return cursor.fetchone() is not None
 
 def load_news():
     if not os.path.exists(db_file):
@@ -20,7 +11,18 @@ def load_news():
     with open(db_file, "r") as f:
         return json.load(f)
 
-from datetime import datetime, timedelta
+def save_news(title, link, published=None):
+    if not published:
+        published = datetime.utcnow().isoformat()
+    print(f"[DB] Menyimpan: {title} - {link}")
+    data = load_news()
+    data[title] = {"link": link, "published": published}
+    with open(db_file, "w") as f:
+        json.dump(data, f)
+
+def is_news_sent(title):
+    data = load_news()
+    return title in data
 
 def get_news_by_date(date):
     data = load_news()
