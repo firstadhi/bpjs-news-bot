@@ -1,5 +1,4 @@
-import requests
-from bs4 import BeautifulSoup
+import feedparser
 from database import save_news, is_news_sent
 from telegram_bot import send_message
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -8,17 +7,15 @@ import config
 
 def scrape_news():
     try:
-        response = requests.get(config.NEWS_SITE)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        articles = soup.select('article h3 a')
-
-        for a in articles[:10]:
-            title = a.text.strip()
-            url = 'https://news.google.com' + a['href'][1:]
-            published_at = datetime.datetime.now().isoformat()
+        feed_url = f"https://news.google.com/rss/search?q={config.NEWS_KEYWORD.replace(' ', '%20')}"
+        feed = feedparser.parse(feed_url)
+        for entry in feed.entries[:10]:
+            title = entry.title
+            url = entry.link
+            published_at = datetime.datetime(*entry.published_parsed[:6]).isoformat()
             if not is_news_sent(title):
                 save_news(title, url, published_at)
-                send_message(f"📰 {title}\n{url}")
+                send_message(f"📰 {title}\\n{url}")
     except Exception as e:
         print(f"Scraping failed: {e}")
 
