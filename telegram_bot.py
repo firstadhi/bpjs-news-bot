@@ -2,6 +2,7 @@ import requests
 import config
 import datetime
 from database import get_news_by_date, get_news_last_week, get_news_by_month
+from scraper import scrape_news  # untuk perintah /refresh
 
 def send_message(text):
     url = f"https://api.telegram.org/bot{config.TELEGRAM_TOKEN}/sendMessage"
@@ -31,8 +32,12 @@ def handle_update(update):
             reply = format_news_list(news, f"Bulan {month} {year}")
         except:
             reply = "Format salah. Gunakan: /bulan Juli 2025"
+    elif text == "/refresh":
+        send_message("🔄 Sedang memproses update berita terbaru...")
+        scrape_news()
+        return
     else:
-        reply = "Perintah tidak dikenal. Gunakan: /today, /week, /bulan <bulan tahun>"
+        reply = "Perintah tidak dikenal. Gunakan: /today, /week, /bulan <bulan tahun>, /refresh"
 
     send_message(reply)
 
