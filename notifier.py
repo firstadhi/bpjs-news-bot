@@ -1,23 +1,16 @@
-from scraper_google import search_bpjs_news
+import requests
+from config import TELEGRAM_TOKEN
 
-def handle_google_search(update, context):
-    articles = search_bpjs_news()
-    if not articles:
-        update.message.reply_text("Tidak ditemukan berita terbaru.")
-        return
-
-    for article in articles:
-        text = f"📰 {article['title']}\n{article['url']}\n\n{article['content'][:300]}..."
-        update.message.reply_text(text)
-def send_message(text: str):
-    import requests
-    from config import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
-
+def send_message(chat_id, text: str):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
+        "chat_id": chat_id,
         "text": text,
         "parse_mode": "HTML"
     }
-    response = requests.post(url, json=payload)
+    try:
+        response = requests.post(url, json=payload)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to send message: {e}")
     return response
