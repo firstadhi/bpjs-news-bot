@@ -1,11 +1,13 @@
 import requests
 import config
 
-def send_message(text):
-    url = f"https://api.telegram.org/bot{config.TELEGRAM_TOKEN}/sendMessage"
+def send_message(message):
+    url = f"https://api.telegram.org/bot{config.BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": config.CHAT_ID,
-        "text": text,
-        "parse_mode": "HTML"
+        "text": message
     }
-    requests.post(url, json=payload)
+    try:
+        requests.post(url, json=payload)
+    except Exception as e:
+        print("Failed to send message:", e)
