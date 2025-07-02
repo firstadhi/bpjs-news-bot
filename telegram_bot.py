@@ -1,52 +1,47 @@
-import telebot
-import datetime
-import config
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from database import get_news_by_date, get_news_last_week, get_news_by_month
 from scraper import scrape_news
+import datetime
+import config
 
-bot = telebot.TeleBot(config.TELEGRAM_TOKEN)
-
-@bot.message_handler(commands=['start', 'help'])
-def handle_start(message):
-    bot.reply_to(message, "Perintah tersedia: /today, /week, /bulan <Juli 2025>, /refresh")
-
-@bot.message_handler(commands=['today'])
-def handle_today(message):
+async def today(update: Update, context: ContextTypes.DEFAULT_TYPE):
     today = datetime.date.today()
     news = get_news_by_date(today)
     reply = format_news_list(news, "Hari Ini")
-    bot.send_message(message.chat.id, reply, parse_mode="HTML")
+    await update.message.reply_text(reply, parse_mode="HTML")
 
-@bot.message_handler(commands=['week'])
-def handle_week(message):
+async def week(update: Update, context: ContextTypes.DEFAULT_TYPE):
     news = get_news_last_week()
     reply = format_news_list(news, "1 Minggu Terakhir")
-    bot.send_message(message.chat.id, reply, parse_mode="HTML")
+    await update.message.reply_text(reply, parse_mode="HTML")
 
-@bot.message_handler(commands=['bulan'])
-def handle_bulan(message):
+async def bulan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        args = message.text.split()
-        if len(args) != 3:
-            raise ValueError
-        bulan, tahun = args[1], int(args[2])
-        news = get_news_by_month(bulan, tahun)
-        reply = format_news_list(news, f"Bulan {bulan} {tahun}")
+        month, year = context.args
+        news = get_news_by_month(month, int(year))
+        reply = format_news_list(news, f"Bulan {month} {year}")
     except:
         reply = "Format salah. Gunakan: /bulan Juli 2025"
-    bot.send_message(message.chat.id, reply, parse_mode="HTML")
+    await update.message.reply_text(reply, parse_mode="HTML")
 
-@bot.message_handler(commands=['refresh'])
-def handle_refresh(message):
-    bot.send_message(message.chat.id, "🔄 Memproses berita terbaru...")
+async def refresh(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("🔄 Memproses berita terbaru...")
     scrape_news()
-    bot.send_message(message.chat.id, "✅ Selesai update berita.")
+    await update.message.reply_text("✅ Update selesai.")
 
 def format_news_list(news, title):
     if not news:
         return f"Tidak ada berita untuk {title}"
     return f"<b>Berita {title}:</b>\n\n" + "\n\n".join([f"📰 {n[1]}\n{n[2]}" for n in news])
 
+def run_bot():
+    app = ApplicationBuilder().token(config.TELEGRAM_TOKEN).build()
+    app.add_handler(CommandHandler("today", today))
+    app.add_handler(CommandHandler("week", week))
+    app.add_handler(CommandHandler("bulan", bulan))
+    app.add_handler(CommandHandler("refresh", refresh))
+    app.run_polling()
+
 if __name__ == "__main__":
-    print("Bot Telegram aktif...")
-    bot.infinity_polling()
+    run_bot()
